@@ -5,12 +5,13 @@ echo "$PWD"
 
 npx create-next-app@latest $APP_NAME --yes
 
+npm i dotenv
 cd $APP_NAME
 
 cd app
 
 rm -fr page.tsx
-mv /data/src/page.txt .
+cp /data/src/page.tsx .
 cd ..
 
 npm run build
