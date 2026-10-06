@@ -9,8 +9,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.synced_folder "src/", "/data"
   config.vm.provision "shell", "path": "scripts/set_up.sh" 
-  config.vm.provision "shell", "path": "scripts/kubernetes.sh"
-
   
   # Server set up
   config.vm.define "cmorelS" do |server|
