@@ -4,10 +4,8 @@ metadata:
   name: app3
 spec:
   selector:
-    matchLabels: 
-      app: app3
+    app: app3
   ports:
     - protocol: TCP
       port: 80 # outside pod
-      targetPort: 4045 # inside pod
-
+      targetPort: 3000 # inside pod

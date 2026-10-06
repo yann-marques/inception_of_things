@@ -20,7 +20,7 @@ spec:
           - name: APP_NAME
             value: "app1"
         ports:
-        - containerPort: 4045
+        - containerPort: 3000
         volumeMounts:
           - name: config-vol
             mountPath: /data

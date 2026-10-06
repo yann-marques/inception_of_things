@@ -16,21 +16,16 @@ spec:
       - name: app3
         command: ["/data/scripts/launcher.sh"]
         image: openeuler/next
+        env:
+          - name: APP_NAME
+            value: "app4"
         ports:
-        - containerPort: 4045
+        - containerPort: 3000
         volumeMounts:
           - name: config-vol
-            mountPath: /data/page.tsx
-            subPath: page.tsx
-          - name: config-vol
-            mountPath: /data/scripts/launcher.sh
-            subPath: launcher.sh
+            mountPath: /data
       volumes:
         - name: config-vol
-        configMap:
-          name: page-conf
-          items:
-            - key: page-conf
-              path: src/page.tsx
-            - key: script-conf
-              path: scipts/launcher.sh
+          hostPath:
+            path: /data
+            type: Directory

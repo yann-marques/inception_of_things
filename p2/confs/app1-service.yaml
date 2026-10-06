@@ -4,8 +4,8 @@ metadata:
   name: app1
 spec:
   selector:
-    app.kubernetes.io/name: app1
+    app: app1
   ports:
     - protocol: TCP
       port: 80 # outside pod
-      targetPort: 4045 # inside pod
+      targetPort: 3000 # inside pod
