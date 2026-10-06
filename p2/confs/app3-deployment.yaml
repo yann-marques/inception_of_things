@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3
+spec:
+  selector:
+    matchLabels: 
+      app: app3
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: app3
+        command: ["/data/scripts/launcher.sh"]
+        image: openeuler/next
+        ports:
+        - containerPort: 4045
+        volumeMounts:
+          - name: config-vol
+            mountPath: /data/page.tsx
+            subPath: page.tsx
+          - name: config-vol
+            mountPath: /data/scripts/launcher.sh
+            subPath: launcher.sh
+      volumes:
+        - name: config-vol
+        configMap:
+          name: page-conf
+          items:
+            - key: page-conf
+              path: src/page.tsx
+            - key: script-conf
+              path: scipts/launcher.sh
