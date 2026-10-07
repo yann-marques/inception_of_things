@@ -1,13 +1,14 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "cloud-image/debian-13"
 
-    # Set up of the Virtual box env
-  config.vm.provider "virtualbox" do |vb|
+    # Set up of the libvirt env
+  config.vm.provider "libvirt" do |vb|
     vb.memory = "1024"
     vb.cpus = 2
+    vb.driver = "qemu"
   end
 
-  config.vm.synced_folder "src/", "/data"
+  config.vm.synced_folder "src/", "/data", type: "nfs", create:true, nfs_udp: false, mount_options: ['rw,async,fsc,nolock,tcp,hard']
   config.vm.provision "shell", "path": "scripts/set_up.sh" 
   
   # Server set up
@@ -15,7 +16,7 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "cmorelS"
     server.vm.network "private_network", ip: "192.168.56.110"
     server.vm.provision "shell",
-      path: "scripts/server.sh"
+      path: "data/scripts/server.sh"
   end
 
   # Worker set up
@@ -23,7 +24,7 @@ Vagrant.configure("2") do |config|
     worker.vm.hostname = "cmorelWS"
     worker.vm.network "private_network", ip: "192.168.56.111" 
     worker.vm.provision "shell",
-      path: "scripts/worker.sh"
+      path: "data/scripts/worker.sh"
   end
 
 end
