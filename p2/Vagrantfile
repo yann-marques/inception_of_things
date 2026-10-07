@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "cloud-image/debian-13"
 
-    # Set up of the libviert env
+    # Set up of the libvirt env
   config.vm.provider "libvirt" do |vb|
     vb.memory = "4096"
     vb.cpus = 8

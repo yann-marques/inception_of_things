@@ -8,8 +8,8 @@ Vagrant.configure("2") do |config|
     vb.driver = "qemu"
   end
 
-  config.vm.synced_folder "src/", "/data", type: "nfs", create:true, nfs_udp: false, mount_options: ['rw,async,fsc,nolock,tcp,hard']
-  config.vm.provision "shell", "path": "scripts/set_up.sh" 
+  config.vm.synced_folder "data/", "/data", type: "nfs", create:true, nfs_udp: false, mount_options: ['rw,async,fsc,nolock,tcp,hard']
+  config.vm.provision "shell", "path": "data/scripts/set_up.sh" 
   
   # Server set up
   config.vm.define "cmorelS" do |server|
