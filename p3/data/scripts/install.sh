@@ -30,5 +30,20 @@ sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin dock
 echo "<============ Testing docker run ===========>"
 sudo docker run hello-world
 
+echo "<============ Fetching  kubectl ===========>"
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+echo "<============ Installing  kubectl ===========>"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+echo "<============ Adding exec rights to kubectl ===========>"
+chmod +x kubectl
+
+echo "<============ Moving kubectl to the /usr/local/bin folder ===========>"
+sudo mv ./kubectl /usr/local/bin/kubectl
+
 echo "<============ Fetching k3d ===========>"
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+echo "<============ Fetching k3d ===========>"
+sudo k3d cluster create p3-cluster
