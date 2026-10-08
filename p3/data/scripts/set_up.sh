@@ -1,6 +1,9 @@
 #!/bin/bash
 
-echo -e "\033[0;32m<============ Creating  cluster for k3d ===========>"
+echo -e "\033[0;32m<============ Deleting cluster for k3d ===========>"
+sudo k3d cluster delete p3-cluster 2> /dev/null
+
+echo -e "\033[0;32m<============ Creating cluster for k3d ===========>"
 sudo k3d cluster create p3-cluster
 
 echo -e "\033[0;32m<============ Connecting to the Cluster ===========>"
@@ -46,13 +49,16 @@ echo -e "\033[0;32m<============ Creating wil42 app ===========>"
 sudo argocd app create wil42-deployment --repo https://github.com/yann-marques/ymarques_wil42_deployment.git --path confs --dest-namespace dev --dest-server https://kubernetes.default.svc --directory-recurse
 sudo argocd app set wil42-deployment --sync-policy automated
 
-echo -e "\033[0;32m<============ Port forwarding wil42-playground ===========>"
 
 sleep 3
-while [ "$(kubectl get pods -n argocd | grep "wil42-deployment" | awk '{print $2}')" = "0/1" ]; do
+while [ "$(kubectl get pods -n dev | grep "wil42-playground" | awk '{print $2}')" = "0/1" ]; do
         echo -e "\033[0;35mWaiting for the server to be up..."
         sleep 5
 done
+
+echo -e "\033[0;32m<============ Port forwarding wil42-playground ===========>"
+wil_app_name="$(kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')"
+sudo kubectl port-forward "$wil_app_name" -n dev 8888:8888 &
 
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
 
