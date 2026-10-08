@@ -46,5 +46,10 @@ echo -e "\033[0;32m<============ Creating wil42 app ===========>"
 sudo argocd app create wil42-deployment --repo https://github.com/yann-marques/ymarques_wil42_deployment.git --path confs --dest-namespace dev --dest-server https://kubernetes.default.svc --directory-recurse
 sudo argocd app set wil42-deployment --sync-policy automated
 
+while [ "$(kubectl get pods -n argocd | grep "dlkawhdkawhndklnawdklnawldnawl" | awk '{print $2}')" = "0/1" ]; do
+        echo -e "\033[0;35mWaiting for the server to be up..."
+        sleep 5
+done
+
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
 
