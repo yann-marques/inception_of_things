@@ -44,7 +44,3 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 
 echo "<============ Fetching k3d ===========>"
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-
-echo "<============ Fetching k3d ===========>"
-sudo k3d cluster create p3-cluster
-
