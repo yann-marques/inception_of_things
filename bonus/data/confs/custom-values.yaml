@@ -1,0 +1,85 @@
+global:
+  edition: ce
+  hosts:
+    domain: gitlab.local
+    https: false
+
+  # Domaine local : Let's Encrypt est impossible, on désactive cert-manager et le TLS
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: false
+
+  # PostgreSQL externe
+  psql:
+    host: postgresql
+    port: 5432
+    database: gitlabhq_production
+    username: gitlab
+    password:
+      useSecret: true
+      secret: gitlab-postgresql-password
+      key: password
+
+  # Redis externe
+  redis:
+    host: redis
+    port: 6379
+    auth:
+      enabled: true
+      secret: gitlab-redis-password
+      key: password
+
+  # MinIO externe : on désactive celui du chart
+  minio:
+    enabled: false
+
+  appConfig:
+    object_store:
+      enabled: true
+      proxy_download: true
+      storage_options: {}
+      connection:
+        secret: gitlab-minio-connection
+        key: connection
+    lfs:
+      enabled: true
+      bucket: gitlab-lfs
+    artifacts:
+      enabled: true
+      bucket: gitlab-artifacts
+    uploads:
+      enabled: true
+      bucket: gitlab-uploads
+    packages:
+      enabled: true
+      bucket: gitlab-packages
+    externalDiffs:
+      enabled: true
+      bucket: gitlab-mr-diffs
+    terraformState:
+      enabled: true
+      bucket: gitlab-terraform-state
+    ciSecureFiles:
+      enabled: true
+      bucket: gitlab-ci-secure-files
+    dependencyProxy:
+      enabled: true
+      bucket: gitlab-dependency-proxy
+
+postgresql:
+  install: false
+
+redis:
+  install: false
+
+certmanager:
+  enabled: false
+
+# Registry : stockage objet externe (MinIO)
+registry:
+  storage:
+    secret: registry-storage
+    key: config
+    redirect:
+      disable: true   # MinIO est interne : les clients ne peuvent pas suivre une redirection vers http://minio:9000
