@@ -88,6 +88,9 @@ gitlab:
     minReplicas: 1
     maxReplicas: 1
     workerProcesses: 1
+    workhorse:
+      tls:
+        caSecretName: gitlab-workhorse-ca   # = secret cree dans set_up.sh
     extraEnv:
       MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
 
