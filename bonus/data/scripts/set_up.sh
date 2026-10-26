@@ -61,19 +61,18 @@ sudo kubectl delete crd gatewayclasses.gateway.networking.k8s.io gateways.gatewa
 echo -e "\033[0;32m<============ Creating self-signed TLS certificate ===========>\033[0m"
 openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout tls.key -out tls.crt \
   -subj "/CN=gitlab.gitlab.local/emailAddress=cmorel-ymarques@example.com" \
-  -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:kas.gitlab.local"
-sudo kubectl create secret tls gitlab-gateway-tls -n gitlab --cert=tls.crt --key=tls.key
+  -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:gitlab-webservice-default,IP:$(hostname -I | awk '{print $1}')"
+sudo kubectl create secret tls gitlab-workhorse-tls -n gitlab --cert=tls.crt --key=tls.key
+sudo kubectl create secret generic gitlab-workhorse-ca -n gitlab --from-file=ca.crt=tls.crt
 
 echo -e "\033[0;32m<============ Installing gitlab Helm ===========>\033[0m"
 sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-values.yaml --server-side --force-conflicts
 
-until sudo kubectl get pods -n gitlab | grep "envoy-gitlab" | grep -q "Running"; do
-        echo -e "\033[0;35mWaiting for the gitlab gateway to be up..."
-        sleep 5
-done
+echo -e "\033[0;35mWaiting for the gitlab webservice to be up (can take several minutes)..."
+sudo kubectl wait --for=condition=Ready pod -l app=webservice -n gitlab --timeout=1200s
 
 echo -e "\033[0;32m<============ Port forwarding gitlab WebApp ===========>\033[0m"
-sudo kubectl port-forward --address 0.0.0.0 -n gitlab $(sudo kubectl get svc -n gitlab -o name | grep envoy-gitlab) 8443:443 &
-echo -e "\033[0;34m[INFO]: Add '<vm-ip> gitlab.gitlab.local' to /etc/hosts, then connect through: https://gitlab.gitlab.local:8443\033[0;32m"
+sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-webservice-default 8443:8181 &
+echo -e "\033[0;34m[INFO]: Connect through: https://$(hostname -I | awk '{print $1}'):8443\033[0;32m"
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"

@@ -6,6 +6,14 @@ global:
     domain: gitlab.local
     https: true
 
+  # HTTPS servi directement par workhorse (comme argocd-server), certificat cree dans set_up.sh
+  workhorse:
+    tls:
+      enabled: true
+  certificates:
+    customCAs:
+      - secret: gitlab-workhorse-ca   # certificat auto-signe, pour que les autres pods GitLab lui fassent confiance
+
   gatewayApi:
     configureCertmanager: false
 
@@ -71,11 +79,6 @@ redis:
   install: false
 
 installCertmanager: false
-
-gatewayApiResources:
-  gateway:
-    tls:
-      secretName: gitlab-gateway-tls   # certificat auto-signe cree dans set_up.sh
 
 prometheus:
   install: false
