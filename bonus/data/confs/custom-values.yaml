@@ -12,7 +12,7 @@ global:
       enabled: false
 
   psql:
-    host: postgresql
+    host: postgres
     port: 5432
     database: gitlabhq_production
     username: gitlab
@@ -40,8 +40,12 @@ global:
       connection:
         secret: gitlab-minio-connection
         key: connection
+    
+    registry:
+      enabled: false
+
     lfs:
-      enabled: true
+      enabled: false
       bucket: gitlab-lfs
     artifacts:
       enabled: true
@@ -50,19 +54,19 @@ global:
       enabled: true
       bucket: gitlab-uploads
     packages:
-      enabled: true
+      enabled: false
       bucket: gitlab-packages
     externalDiffs:
       enabled: true
       bucket: gitlab-mr-diffs
     terraformState:
-      enabled: true
+      enabled: false
       bucket: gitlab-terraform-state
     ciSecureFiles:
-      enabled: true
+      enabled: false
       bucket: gitlab-ci-secure-files
     dependencyProxy:
-      enabled: true
+      enabled: false
       bucket: gitlab-dependency-proxy
 
 postgresql:
