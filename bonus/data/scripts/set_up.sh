@@ -58,10 +58,13 @@ sudo helm repo update
 echo -e "\033[0;32m<============ Removing crd ===========>\033[0m"
 sudo kubectl delete crd gatewayclasses.gateway.networking.k8s.io gateways.gateway.networking.k8s.io httproutes.gateway.networking.k8s.io referencegrants.gateway.networking.k8s.io backendtlspolicies.gateway.networking.k8s.io grpcroutes.gateway.networking.k8s.io --ignore-not-found
 
+echo -e "\033[0;32m<============ Creating self-signed TLS certificate ===========>\033[0m"
+openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout tls.key -out tls.crt \
+  -subj "/CN=gitlab.gitlab.local/emailAddress=cmorel-ymarques@example.com" \
+  -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:kas.gitlab.local"
+sudo kubectl create secret tls gitlab-gateway-tls -n gitlab --cert=tls.crt --key=tls.key
+
 echo -e "\033[0;32m<============ Installing gitlab Helm ===========>\033[0m"
 sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-values.yaml --server-side --force-conflicts
-
-echo -e "\033[0;32m\033[0;34m[INFO]: Address of the gitlab: \033[0;32m"
-sudo kubectl get ingress -n gitlab -lrelease=gitlab
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"

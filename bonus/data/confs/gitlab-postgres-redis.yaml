@@ -217,20 +217,3 @@ stringData:
     host: minio
     endpoint: "http://minio:9000"
     path_style: true
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: registry-storage             # = registry.storage.secret
-  namespace: gitlab
-type: Opaque
-stringData:
-  config: |                          # = registry.storage.key
-    s3:
-      bucket: gitlab-registry
-      accesskey: minioadmin
-      secretkey: Coucou1234?
-      region: us-east-1
-      regionendpoint: "http://minio:9000"
-      v4auth: true
-      pathstyle: true

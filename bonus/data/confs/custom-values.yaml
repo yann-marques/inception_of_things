@@ -6,13 +6,8 @@ global:
     domain: gitlab.local
     https: true
 
-  ingress:
-    configureCertmanager: false
-    tls:
-      enabled: false
-
   gatewayApi:
-    configureCertmanager: true
+    configureCertmanager: false
 
   psql:
     host: postgresql
@@ -43,9 +38,6 @@ global:
       connection:
         secret: gitlab-minio-connection
         key: connection
-    
-    registry:
-      enabled: false
 
     lfs:
       enabled: false
@@ -78,12 +70,13 @@ postgresql:
 redis:
   install: false
 
-installCertmanager: true
+installCertmanager: false
 
-certmanager-issuer:
-  email: cmorel-ymarques@example.com   # compte Let's Encrypt qui signe les certificats de la Gateway
+gatewayApiResources:
+  gateway:
+    tls:
+      secretName: gitlab-gateway-tls   # certificat auto-signe cree dans set_up.sh
 
-# Registry : stockage objet externe (MinIO)
 prometheus:
   install: false
 
@@ -115,8 +108,3 @@ gitlab:
 
 registry:
   enabled: false
-  storage:
-    secret: registry-storage
-    key: config
-    redirect:
-      disable: true
