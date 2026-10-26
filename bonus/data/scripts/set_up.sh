@@ -67,4 +67,13 @@ sudo kubectl create secret tls gitlab-gateway-tls -n gitlab --cert=tls.crt --key
 echo -e "\033[0;32m<============ Installing gitlab Helm ===========>\033[0m"
 sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-values.yaml --server-side --force-conflicts
 
+until sudo kubectl get pods -n gitlab | grep "envoy-gitlab" | grep -q "Running"; do
+        echo -e "\033[0;35mWaiting for the gitlab gateway to be up..."
+        sleep 5
+done
+
+echo -e "\033[0;32m<============ Port forwarding gitlab WebApp ===========>\033[0m"
+sudo kubectl port-forward -n gitlab $(sudo kubectl get svc -n gitlab -o name | grep envoy-gitlab) 8443:443 &
+echo -e "\033[0;34m[INFO]: Add '127.0.0.1 gitlab.gitlab.local' to /etc/hosts, then connect through: https://gitlab.gitlab.local:8443\033[0;32m"
+
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
