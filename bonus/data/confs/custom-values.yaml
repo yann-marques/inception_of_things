@@ -11,6 +11,9 @@ global:
     tls:
       enabled: false
 
+  gatewayApi:
+    configureCertmanager: false
+
   psql:
     host: postgresql
     port: 5432
@@ -75,12 +78,16 @@ postgresql:
 redis:
   install: false
 
-certmanager:
-  enabled: false
+installCertmanager: false
 
-certmanager-issuer:
-  enabled: false
-  email: cmorel-ymarques@example.com
+# Pas de cert-manager donc pas de certificats TLS : la Gateway sert GitLab en HTTP
+gatewayApiResources:
+  gateway:
+    protocol: HTTP
+  envoy:
+    clientTrafficPolicySpec:
+      path:
+        escapedSlashesAction: KeepUnchanged   # garde les %2F des URLs de l'API GitLab
 
 # Registry : stockage objet externe (MinIO)
 prometheus:

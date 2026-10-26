@@ -175,6 +175,31 @@ spec:
       port: 9001
       targetPort: 9001
 ---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-create-buckets
+  namespace: gitlab
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-buckets
+          image: elestio/minio         # meme image que le pod minio, elle contient le client mc
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until mc alias set local http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
+                echo "Waiting for MinIO..."
+                sleep 2
+              done
+              # = buckets artifacts, uploads et externalDiffs de global.appConfig
+              mc mb --ignore-existing local/gitlab-artifacts local/gitlab-uploads local/gitlab-mr-diffs
+          envFrom:
+            - secretRef:
+                name: gitlab-minio-secret
+---
 apiVersion: v1
 kind: Secret
 metadata:
