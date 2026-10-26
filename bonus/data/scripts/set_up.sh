@@ -39,8 +39,8 @@ while [ "$(kubectl get pods -n argocd | grep "argocd-server" | awk '{print $2}')
 done
 
 echo -e "\033[0;32m<============ Port forwarding argocd WebApp ===========>\033[0m"
-sudo kubectl port-forward svc/argocd-server -n argocd 8080:443 &
-echo -e "\033[0;34m[INFO]: The port forward allows you to connect to the WebApp through: localhost:8080\033[0;32m"
+sudo kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443 &
+echo -e "\033[0;34m[INFO]: The port forward allows you to connect to the WebApp through: https://<vm-ip>:8080\033[0;32m"
 
 echo -e "\033[0;32m<============ Creating dev namespace ===========>\033[0m"
 sudo kubectl create namespace dev
@@ -73,7 +73,7 @@ until sudo kubectl get pods -n gitlab | grep "envoy-gitlab" | grep -q "Running";
 done
 
 echo -e "\033[0;32m<============ Port forwarding gitlab WebApp ===========>\033[0m"
-sudo kubectl port-forward -n gitlab $(sudo kubectl get svc -n gitlab -o name | grep envoy-gitlab) 8443:443 &
-echo -e "\033[0;34m[INFO]: Add '127.0.0.1 gitlab.gitlab.local' to /etc/hosts, then connect through: https://gitlab.gitlab.local:8443\033[0;32m"
+sudo kubectl port-forward --address 0.0.0.0 -n gitlab $(sudo kubectl get svc -n gitlab -o name | grep envoy-gitlab) 8443:443 &
+echo -e "\033[0;34m[INFO]: Add '<vm-ip> gitlab.gitlab.local' to /etc/hosts, then connect through: https://gitlab.gitlab.local:8443\033[0;32m"
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
