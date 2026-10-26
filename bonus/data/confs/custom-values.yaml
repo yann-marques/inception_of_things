@@ -4,7 +4,7 @@ global:
     enabled: false
   hosts:
     domain: gitlab.local
-    https: false
+    https: true
 
   ingress:
     configureCertmanager: false
@@ -12,7 +12,7 @@ global:
       enabled: false
 
   gatewayApi:
-    configureCertmanager: false
+    configureCertmanager: true
 
   psql:
     host: postgresql
@@ -78,16 +78,10 @@ postgresql:
 redis:
   install: false
 
-installCertmanager: false
+installCertmanager: true
 
-# Pas de cert-manager donc pas de certificats TLS : la Gateway sert GitLab en HTTP
-gatewayApiResources:
-  gateway:
-    protocol: HTTP
-  envoy:
-    clientTrafficPolicySpec:
-      path:
-        escapedSlashesAction: KeepUnchanged   # garde les %2F des URLs de l'API GitLab
+certmanager-issuer:
+  email: cmorel-ymarques@example.com   # compte Let's Encrypt qui signe les certificats de la Gateway
 
 # Registry : stockage objet externe (MinIO)
 prometheus:
