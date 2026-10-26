@@ -76,8 +76,14 @@ redis:
 certmanager:
   enabled: false
 
+certmanager-issuer:
+  enabled: false
+  email: cmorel-ymarques@example.com
+
+
 # Registry : stockage objet externe (MinIO)
 registry:
+  enabled: false
   storage:
     secret: registry-storage
     key: config

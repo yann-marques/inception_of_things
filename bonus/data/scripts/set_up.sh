@@ -48,6 +48,9 @@ sudo kubectl create namespace dev
 echo -e "\033[0;32m<============ Creating Gitlab namespace ===========>\033[0m"
 sudo kubectl create namespace gitlab
 
+echo -e "\033[0;32m<============ Launching gitlab deps services ===========>\033[0m"
+sudo kubectl apply -n gitlab -f ../confs/gitlab-postgres-redis.yaml
+
 echo -e "\033[0;32m<============ Adding Gitlab helm ===========>\033[0m"
 sudo helm repo add gitlab https://charts.gitlab.io
 sudo helm repo update
