@@ -1,16 +1,16 @@
 global:
   edition: ce
+  monitoring:
+    enabled: false
   hosts:
     domain: gitlab.local
     https: false
 
-  # Domaine local : Let's Encrypt est impossible, on désactive cert-manager et le TLS
   ingress:
     configureCertmanager: false
     tls:
       enabled: false
 
-  # PostgreSQL externe
   psql:
     host: postgresql
     port: 5432
@@ -21,7 +21,6 @@ global:
       secret: gitlab-postgresql-password
       key: password
 
-  # Redis externe
   redis:
     host: redis
     port: 6379
@@ -30,7 +29,6 @@ global:
       secret: gitlab-redis-password
       key: password
 
-  # MinIO externe : on désactive celui du chart
   minio:
     enabled: false
 
@@ -80,12 +78,43 @@ certmanager-issuer:
   enabled: false
   email: cmorel-ymarques@example.com
 
-
 # Registry : stockage objet externe (MinIO)
+prometheus:
+  install: false
+
+webservice:
+  minReplicas: 1
+  maxReplicas: 1
+  workerProcesses: 1
+  extraEnv:
+    - name: MALLOC_CONF
+      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+
+sidekiq:
+  minReplicas: 1
+  maxReplicas: 1
+  concurrency: 10
+  extraEnv:
+    - name: MALLOC_CONF
+      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+
+gitaly:
+  extraEnv:
+    - name: MALLOC_CONF
+      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+    - name: GITALY_COMMAND_SPAWN_MAX_PARALLEL
+      value: "2"
+  configuration:
+    concurrency:
+      - rpc: "/gitaly.SmartHTTPService/PostReceivePack"
+        max_per_repo: 3
+      - rpc: "/gitaly.SSHService/SSHUploadPack"
+        max_per_repo: 3
+
 registry:
   enabled: false
   storage:
     secret: registry-storage
     key: config
     redirect:
-      disable: true   # MinIO est interne : les clients ne peuvent pas suivre une redirection vers http://minio:9000
+      disable: true
