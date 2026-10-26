@@ -24,6 +24,7 @@ spec:
   containers:
     - name: postgres
       image: postgres:17
+      args: ["-c", "max_locks_per_transaction=512"]   # defaut 64
       ports:
         - containerPort: 5432
       env:
