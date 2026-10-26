@@ -12,7 +12,7 @@ global:
       enabled: false
 
   psql:
-    host: postgres
+    host: postgresql
     port: 5432
     database: gitlabhq_production
     username: gitlab
@@ -86,34 +86,31 @@ certmanager-issuer:
 prometheus:
   install: false
 
-webservice:
-  minReplicas: 1
-  maxReplicas: 1
-  workerProcesses: 1
-  extraEnv:
-    - name: MALLOC_CONF
-      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+    workerProcesses: 1
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
 
-sidekiq:
-  minReplicas: 1
-  maxReplicas: 1
-  concurrency: 10
-  extraEnv:
-    - name: MALLOC_CONF
-      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+    concurrency: 10
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
 
-gitaly:
-  extraEnv:
-    - name: MALLOC_CONF
-      value: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
-    - name: GITALY_COMMAND_SPAWN_MAX_PARALLEL
-      value: "2"
-  configuration:
-    concurrency:
-      - rpc: "/gitaly.SmartHTTPService/PostReceivePack"
-        max_per_repo: 3
-      - rpc: "/gitaly.SSHService/SSHUploadPack"
-        max_per_repo: 3
+  gitaly:
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+      GITALY_COMMAND_SPAWN_MAX_PARALLEL: "2"
+    configuration:
+      concurrency:
+        - rpc: "/gitaly.SmartHTTPService/PostReceivePack"
+          max_per_repo: 3
+        - rpc: "/gitaly.SSHService/SSHUploadPack"
+          max_per_repo: 3
 
 registry:
   enabled: false

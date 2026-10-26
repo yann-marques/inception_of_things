@@ -64,4 +64,4 @@ sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-va
 echo -e "\033[0;32m\033[0;34m[INFO]: Address of the gitlab: \033[0;32m"
 sudo kubectl get ingress -n gitlab -lrelease=gitlab
 
-echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64) \033[0;32m"
+echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
