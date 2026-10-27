@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\033[0;32m<============ Deleting cluster for k3d ===========>\033[0m"
-sudo k3d cluster delete bonus-cluster 2> /dev/null
+sudo k3d cluster delete -a 2> /dev/null
 
 echo -e "\033[0;32m<============ Creating cluster for k3d ===========>\033[0m"
 sudo k3d cluster create bonus-cluster
@@ -76,3 +76,4 @@ echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -
 
 #sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888
 #git clone ssh://git@10.171.52.243:2222/<REPOSITORY>.git
+#https://gitlab-webservice-default.gitlab.svc:8181/ymarques/ymarques_wil42.git

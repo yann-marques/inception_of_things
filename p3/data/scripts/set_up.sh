@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\033[0;32m<============ Deleting cluster for k3d ===========>\033[0m"
-sudo k3d cluster delete p3-cluster 2> /dev/null
+sudo k3d cluster delete -a 2> /dev/null
 
 echo -e "\033[0;32m<============ Creating cluster for k3d ===========>\033[0m"
 sudo k3d cluster create p3-cluster
