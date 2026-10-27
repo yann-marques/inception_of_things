@@ -75,4 +75,7 @@ echo -e "\033[0;32m<============ Port forwarding gitlab WebApp ===========>\033[
 sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-webservice-default 8443:8181 &
 echo -e "\033[0;34m[INFO]: Connect through: https://$(hostname -I | awk '{print $1}'):8443\033[0;32m"
 
+echo -e "\033[0;32m<============ Port forwarding gitlab shell server ===========>\033[0m"
+sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-gitlab-shell 2222:22 &
+
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
