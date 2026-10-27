@@ -13,5 +13,6 @@ curl -sfL https://get.k3s.io | sh -s - server --disable traefik --node-ip="$SERV
 
 echo "<========================= Writing k3s token =========================>"
 
-sudo chmod 600 "/data/.k3s-token"
 cat /var/lib/rancher/k3s/server/node-token > /data/.k3s-token
+
+sudo chmod 600 "/data/.k3s-token"
