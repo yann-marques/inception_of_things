@@ -72,6 +72,7 @@ echo -e "\033[0;32m<============ Port forwarding gitlab shell server ===========
 sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-gitlab-shell 2222:22 &
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
+echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
 
 #sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888
 #git clone ssh://git@10.171.52.243:2222/<REPOSITORY>.git
