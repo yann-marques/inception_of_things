@@ -18,21 +18,6 @@ sudo kubectl apply -n argocd --server-side --force-conflicts -f https://raw.gith
 echo -e "\033[0;32m<============ Setting argocd namespace to default ===========>\033[0m"
 sudo kubectl config set-context --current --namespace=argocd
 
-
-echo -e "\033[0;32m<============ Fetching argocd binary ===========>\033[0m"
-wget https://github.com/argoproj/argo-cd/releases/download/v3.5.4/argocd-linux-amd64 -O argocd
-
-echo -e "\033[0;32m<============ Making argocd executable ===========>\033[0m"
-chmod +x argocd
-
-echo -e "\033[0;32m<============ Putting argocd into the /bin ===========>\033[0m"
-sudo mv argocd /bin
-
-echo -e "\033[0;32m<============ Connecting to the argocd in-cluster mod ===========>\033[0m"
-sudo argocd login --core
-
-echo -e "\033[0;32m\033[0;34m[INFO]: to see your cluster status use: sudo argocd cluster list\033[0;32m"
-
 while [ "$(kubectl get pods -n argocd | grep "argocd-server" | awk '{print $2}')" = "0/1" ]; do
         echo -e "\033[0;35mWaiting for the server to be up..."
         sleep 5
@@ -67,7 +52,11 @@ sudo kubectl create secret tls gitlab-workhorse-tls -n gitlab --cert=tls.crt --k
 sudo kubectl create secret generic gitlab-workhorse-ca -n gitlab --from-file=ca.crt=tls.crt
 
 echo -e "\033[0;32m<============ Add the self signed certificate to ArgoCD ===========>\033[0m"
-sudo argocd cert add-tls gitlab-webservice-default.gitlab.svc --from tls.crt
+# equivalent de "argocd cert add-tls", sans dependre du namespace du contexte kubectl
+# la cle doit etre exactement l'hote de l'URL du repo
+sudo kubectl -n argocd create configmap argocd-tls-certs-cm \
+  --from-file=gitlab-webservice-default.gitlab.svc=tls.crt \
+  --dry-run=client -o yaml | sudo kubectl apply --server-side -f -
 
 echo -e "\033[0;32m<============ Installing gitlab Helm ===========>\033[0m"
 sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-values.yaml --server-side --force-conflicts
@@ -83,3 +72,6 @@ echo -e "\033[0;32m<============ Port forwarding gitlab shell server ===========
 sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-gitlab-shell 2222:22 &
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
+
+#sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888
+#git clone ssh://git@10.171.52.243:2222/<REPOSITORY>.git

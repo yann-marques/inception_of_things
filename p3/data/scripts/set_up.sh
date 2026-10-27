@@ -61,4 +61,3 @@ wil_app_name="$(kubectl get pods -n dev | grep 'wil42-playground' | awk '{print 
 sudo kubectl port-forward "$wil_app_name" -n dev 8888:8888 &
 
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
-
