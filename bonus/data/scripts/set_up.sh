@@ -62,8 +62,12 @@ echo -e "\033[0;32m<============ Creating self-signed TLS certificate ==========
 openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout tls.key -out tls.crt \
   -subj "/CN=gitlab.gitlab.local/emailAddress=cmorel-ymarques@example.com" \
   -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:gitlab-webservice-default,DNS:gitlab-webservice-default.gitlab.svc,DNS:gitlab-webservice-default.gitlab.svc.cluster.local,IP:$(hostname -I | awk '{print $1}')"
+
 sudo kubectl create secret tls gitlab-workhorse-tls -n gitlab --cert=tls.crt --key=tls.key
 sudo kubectl create secret generic gitlab-workhorse-ca -n gitlab --from-file=ca.crt=tls.crt
+
+echo -e "\033[0;32m<============ Add the self signed certificate to ArgoCD ===========>\033[0m"
+sudo argocd cert add-tls gitlab-webservice-default.gitlab.svc --from tls.crt
 
 echo -e "\033[0;32m<============ Installing gitlab Helm ===========>\033[0m"
 sudo helm upgrade --install gitlab gitlab/gitlab -n gitlab -f ../confs/custom-values.yaml --server-side --force-conflicts
