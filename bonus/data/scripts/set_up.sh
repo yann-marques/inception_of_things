@@ -75,5 +75,5 @@ echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl g
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
 
 #sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888
-#git clone ssh://git@10.171.52.243:2222/<REPOSITORY>.git
+#git clone ssh://git@10.171.52.243:2222/ymarques/ymarques_wil42.git
 #https://gitlab-webservice-default.gitlab.svc:8181/ymarques/ymarques_wil42.git
