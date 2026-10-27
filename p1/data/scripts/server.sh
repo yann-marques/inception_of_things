@@ -9,7 +9,7 @@ rm -f /data/.k3s-token
 
 echo "<========================= Installing k3s server =========================>"
 
-curl -sfL https://get.k3s.io | sh -s - server --disable traefik --node-ip="$SERVER_IP" --node-external-ip="$SERVER_IP" --flannel-iface="$IFACE"
+curl -sfL https://get.k3s.io | sh -s - server --disable traefik --node-ip="$SERVER_IP" --flannel-iface="$IFACE"
 
 echo "<========================= Writing k3s token =========================>"
 

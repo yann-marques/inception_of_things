@@ -18,4 +18,4 @@ echo "<========================= Installing k3s worker =========================
 curl -sfL https://get.k3s.io | \
   K3S_URL="https://$SERVER_IP:6443" \
   K3S_TOKEN="$TOKEN" \
-  sh -s - agent --node-ip="$WORKER_IP" --node-external-ip="$WORKER_IP" --flannel-iface="$IFACE"
+  sh -s - agent --node-ip="$WORKER_IP" --flannel-iface="$IFACE"
