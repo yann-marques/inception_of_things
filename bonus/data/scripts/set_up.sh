@@ -20,13 +20,13 @@ sudo kubectl config set-context --current --namespace=argocd
 
 
 echo -e "\033[0;32m<============ Fetching argocd binary ===========>\033[0m"
-wget https://github.com/argoproj/argo-cd/releases/download/v3.5.4/argocd-linux-amd64
+wget https://github.com/argoproj/argo-cd/releases/download/v3.5.4/argocd-linux-amd64 -O argocd
 
 echo -e "\033[0;32m<============ Making argocd executable ===========>\033[0m"
-chmod +x argocd-linux-amd64
+chmod +x argocd
 
 echo -e "\033[0;32m<============ Putting argocd into the /bin ===========>\033[0m"
-sudo mv argocd-linux-amd64 /bin/argocd
+sudo mv argocd /bin
 
 echo -e "\033[0;32m<============ Connecting to the argocd in-cluster mod ===========>\033[0m"
 sudo argocd login --core
@@ -61,7 +61,7 @@ sudo kubectl delete crd gatewayclasses.gateway.networking.k8s.io gateways.gatewa
 echo -e "\033[0;32m<============ Creating self-signed TLS certificate ===========>\033[0m"
 openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout tls.key -out tls.crt \
   -subj "/CN=gitlab.gitlab.local/emailAddress=cmorel-ymarques@example.com" \
-  -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:gitlab-webservice-default,IP:$(hostname -I | awk '{print $1}')"
+  -addext "subjectAltName=DNS:gitlab.gitlab.local,DNS:gitlab-webservice-default,DNS:gitlab-webservice-default.gitlab.svc,DNS:gitlab-webservice-default.gitlab.svc.cluster.local,IP:$(hostname -I | awk '{print $1}')"
 sudo kubectl create secret tls gitlab-workhorse-tls -n gitlab --cert=tls.crt --key=tls.key
 sudo kubectl create secret generic gitlab-workhorse-ca -n gitlab --from-file=ca.crt=tls.crt
 
