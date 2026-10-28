@@ -39,7 +39,7 @@ while [ "$(kubectl get pods -n argocd | grep "argocd-server" | awk '{print $2}')
 done
 
 echo -e "\033[0;32m<============ Port forwarding argocd WebApp ===========>\033[0m"
-sudo kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+sudo kubectl port-forward --address=0.0.0.0 svc/argocd-server -n argocd 8080:443 &
 echo -e "\033[0;34m[INFO]: The port forward allows you to connect to the WebApp through: localhost:8080\033[0;32m"
 
 echo -e "\033[0;32m<============ Creating dev namespace ===========>\033[0m"
@@ -52,12 +52,12 @@ sudo argocd app set wil42-deployment --sync-policy automated
 
 sleep 3
 while [ "$(kubectl get pods -n dev | grep "wil42-playground" | awk '{print $2}')" = "0/1" ]; do
-        echo -e "\033[0;35mWaiting for the server to be up..."
+        echo -e "\033[0;35mWaiting for wil42 to be up..."
         sleep 5
 done
 
 echo -e "\033[0;32m<============ Port forwarding wil42-playground ===========>\033[0m"
 wil_app_name="$(kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')"
-sudo kubectl port-forward "$wil_app_name" -n dev 8888:8888 &
+sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888 &
 
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
