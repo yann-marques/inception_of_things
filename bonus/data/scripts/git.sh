@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo -e "\033[0;32m<============ Spawn SSH agent ===========>\033[0m"
+eval "$(ssh-agent -s)"
+
+echo -e "\033[0;32m<============ SSH_ADD Intra key ===========>\033[0m"
+ssh-add ~/.ssh/yes
+
 echo -e "\033[0;32m<============ Creating the folder for the repo ===========>\033[0m"
 mkdir ymarques_wil42
 
