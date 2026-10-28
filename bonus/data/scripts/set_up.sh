@@ -1,13 +1,13 @@
 #!/bin/bash
 
 echo -e "\033[0;32m<============ Deleting cluster for k3d ===========>\033[0m"
-sudo k3d cluster delete -a 2> /dev/null
+sudo k3d cluster delete bonus-cluster 2> /dev/null
 
 echo -e "\033[0;32m<============ Creating cluster for k3d ===========>\033[0m"
 sudo k3d cluster create bonus-cluster
 
 echo -e "\033[0;32m<============ Connecting to the Cluster ===========>\033[0m"
-sudo k3d kubeconfig merge bonus-cluster
+sudo k3d kubeconfig merge bonus-cluster 
 
 echo -e "\033[0;32m<============ Creating argocd namespace ===========>\033[0m"
 sudo kubectl create namespace argocd
@@ -18,13 +18,25 @@ sudo kubectl apply -n argocd --server-side --force-conflicts -f https://raw.gith
 echo -e "\033[0;32m<============ Setting argocd namespace to default ===========>\033[0m"
 sudo kubectl config set-context --current --namespace=argocd
 
+echo -e "\033[0;32m<============ Fetching argocd binary ===========>\033[0m"
+wget https://github.com/argoproj/argo-cd/releases/download/v3.5.4/argocd-linux-amd64 -O argocd
+
+echo -e "\033[0;32m<============ Making argocd executable ===========>\033[0m"
+chmod +x argocd
+
+echo -e "\033[0;32m<============ Putting argocd into the /bin ===========>\033[0m"
+sudo mv argocd /bin/argocd
+
+echo -e "\033[0;32m<============ Connecting to the argocd in-cluster mod ===========>\033[0m"
+sudo argocd login --core
+
 while [ "$(kubectl get pods -n argocd | grep "argocd-server" | awk '{print $2}')" = "0/1" ]; do
         echo -e "\033[0;35mWaiting for the server to be up..."
         sleep 5
 done
 
 echo -e "\033[0;32m<============ Port forwarding argocd WebApp ===========>\033[0m"
-sudo kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443 &
+sudo kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
 echo -e "\033[0;34m[INFO]: The port forward allows you to connect to the WebApp through: https://<vm-ip>:8080\033[0;32m"
 
 echo -e "\033[0;32m<============ Creating dev namespace ===========>\033[0m"
@@ -73,6 +85,8 @@ sudo kubectl port-forward --address 0.0.0.0 -n gitlab svc/gitlab-gitlab-shell 22
 
 echo -e "\033[0;32m\033[0;34m[INFO]: Gitlab Credentials: root : $(sudo kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -ojsonpath='{.data.password}' | base64 -d) \033[0;32m"
 echo -e "\033[0;34m[INFO]: The default credentials are: admin : $(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d) \033[0;32m"
+
+sudo rm -fr tls.crt tls.key
 
 #sudo kubectl port-forward --address=0.0.0.0 "$(sudo kubectl get pods -n dev | grep 'wil42-playground' | awk '{print $1}')" -n dev 8888:8888
 #git clone ssh://git@10.171.52.243:2222/ymarques/ymarques_wil42.git
