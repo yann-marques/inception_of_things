@@ -7,7 +7,7 @@ echo -e "\033[0;32m<============ Creating cluster for k3d ===========>\033[0m"
 sudo k3d cluster create bonus-cluster
 
 echo -e "\033[0;32m<============ Connecting to the Cluster ===========>\033[0m"
-sudo k3d kubeconfig merge bonus-cluster --switch-context
+sudo k3d kubeconfig merge bonus-cluster 
 
 echo -e "\033[0;32m<============ Creating argocd namespace ===========>\033[0m"
 sudo kubectl create namespace argocd
