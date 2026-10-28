@@ -2,7 +2,10 @@
 
 echo "<========================= Installing k3s server =========================>"
 
-curl -sfL https://get.k3s.io | sh -s - server
+SERVER_IP="192.168.56.110"
+IFACE=$(ip -o -4 addr show | awk -v ip="$SERVER_IP" '$4 ~ "^"ip"/" {print $2}')
+
+curl -sfL https://get.k3s.io | sh -s - server --node-ip="$SERVER_IP" --flannel-iface="$IFACE"
 
 echo "<========================= Installing k3s server =========================>"
 
