@@ -27,9 +27,6 @@ sudo apt update
 echo "<============ Docker install ===========>"
 sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-echo "<============ Testing docker run ===========>"
-sudo docker run hello-world
-
 echo "<============ Fetching  kubectl ===========>"
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 

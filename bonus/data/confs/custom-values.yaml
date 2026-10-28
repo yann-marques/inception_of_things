@@ -1,0 +1,119 @@
+global:
+  edition: ce
+  monitoring:
+    enabled: false
+  hosts:
+    domain: gitlab.local
+    https: true
+
+  # HTTPS servi directement par workhorse (comme argocd-server), certificat cree dans set_up.sh
+  workhorse:
+    tls:
+      enabled: true
+  certificates:
+    customCAs:
+      - secret: gitlab-workhorse-ca   # certificat auto-signe, pour que les autres pods GitLab lui fassent confiance
+
+  gatewayApi:
+    configureCertmanager: false
+
+  psql:
+    host: postgresql
+    port: 5432
+    database: gitlabhq_production
+    username: gitlab
+    password:
+      useSecret: true
+      secret: gitlab-postgresql-password
+      key: password
+
+  redis:
+    host: redis
+    port: 6379
+    auth:
+      enabled: true
+      secret: gitlab-redis-password
+      key: password
+
+  minio:
+    enabled: false
+
+  appConfig:
+    object_store:
+      enabled: true
+      proxy_download: true
+      storage_options: {}
+      connection:
+        secret: gitlab-minio-connection
+        key: connection
+
+    lfs:
+      enabled: false
+      bucket: gitlab-lfs
+    artifacts:
+      enabled: true
+      bucket: gitlab-artifacts
+    uploads:
+      enabled: true
+      bucket: gitlab-uploads
+    packages:
+      enabled: false
+      bucket: gitlab-packages
+    externalDiffs:
+      enabled: true
+      bucket: gitlab-mr-diffs
+    terraformState:
+      enabled: false
+      bucket: gitlab-terraform-state
+    ciSecureFiles:
+      enabled: false
+      bucket: gitlab-ci-secure-files
+    dependencyProxy:
+      enabled: false
+      bucket: gitlab-dependency-proxy
+
+postgresql:
+  install: false
+
+redis:
+  install: false
+
+installCertmanager: false
+
+prometheus:
+  install: false
+
+gitlab-runner:
+  install: false   # pas de CI, argocd fait le deploiement
+
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+    workerProcesses: 1
+    workhorse:
+      tls:
+        caSecretName: gitlab-workhorse-ca   # = secret cree dans set_up.sh
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+    concurrency: 10
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+
+  gitaly:
+    extraEnv:
+      MALLOC_CONF: "dirty_decay_ms:1000,muzzy_decay_ms:1000"
+      GITALY_COMMAND_SPAWN_MAX_PARALLEL: "2"
+    configuration:
+      concurrency:
+        - rpc: "/gitaly.SmartHTTPService/PostReceivePack"
+          max_per_repo: 3
+        - rpc: "/gitaly.SSHService/SSHUploadPack"
+          max_per_repo: 3
+
+registry:
+  enabled: false
