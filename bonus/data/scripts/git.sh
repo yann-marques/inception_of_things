@@ -10,7 +10,7 @@ echo -e "\033[0;32m<============ Creating the git repository ===========>\033[0m
 git init
 
 echo -e "\033[0;32m<============ adding both remote repos ===========>\033[0m"
-git remote add gitlab ssh://git@10.171.52.213:2222/ymarques/ymarques_wil42.git
+git remote add gitlab ssh://git@localhost:2222/ymarques/ymarques_wil42.git
 git remote add github git@github.com:yann-marques/ymarques_wil42_deployment.git 
 
 echo -e "\033[0;32m<============ Pulling from github ===========>\033[0m"
