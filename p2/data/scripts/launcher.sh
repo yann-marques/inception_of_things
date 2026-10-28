@@ -3,20 +3,9 @@
 cd /$(whoami)
 echo "$PWD"
 
-npx create-next-app@latest $APP_NAME \
---typescript \
---no-tailwind \
---import-aliases "@/*" \
---no-eslint \
---app \
-
-npm i dotenv
-cd $APP_NAME
-
+mkdir app
 cd app
 
-rm -fr page.tsx
-cp /data/src/page.tsx .
-cd ..
+cp -r /data/src/.next .
 
-npm run dev
+node .next/standalone/server.js
