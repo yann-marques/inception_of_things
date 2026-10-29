@@ -1,10 +1,16 @@
 #!/bin/bash
 
+echo -e "\033[0;32m<============ Remove ymarques_wil42 folder ===========>\033[0m"
+rm -rf ymarques_wil42
+
 echo -e "\033[0;32m<============ Spawn SSH agent ===========>\033[0m"
 eval "$(ssh-agent -s)"
 
 echo -e "\033[0;32m<============ SSH_ADD Intra key ===========>\033[0m"
 ssh-add ~/.ssh/yes
+
+echo -e "\033[0;32m<============ Remove key from known_hosts ===========>\033[0m"
+ssh-keygen -f ~/.ssh/known_hosts -R '[localhost]:2222'
 
 echo -e "\033[0;32m<============ Creating the folder for the repo ===========>\033[0m"
 mkdir ymarques_wil42
